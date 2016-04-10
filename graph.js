@@ -150,7 +150,7 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
         };
     });
 
-    var rangeX = [0, w];
+    var rangeX = [0, w * 0.8];
     var rangeY = [h, 0];
 
     var scaleX = d3.time.scale()
@@ -199,8 +199,8 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
 
     var yAxisRight = d3.svg.axis()
         .scale(scaleY)
-        .ticks(0)
         .orient("right")
+        .tickFormat(d3.format("s"));
 
     return {
         seriesData: seriesData,
