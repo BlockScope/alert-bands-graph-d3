@@ -103,8 +103,8 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
 
         // NOTE: For the domain item 0 < item 1 but for the thresholds item 0 > item 1.
         var c = x.color;
-        var y0 = x.y0 || domainY[1]; 
-        var y1 = x.y1 || domainY[0]; 
+        var y0 = x.y0 === null ? domainY[1] : x.y0; 
+        var y1 = x.y1 === null ? domainY[0] : x.y1; 
         return {
             color: d3.rgb(c.red, c.green, c.blue).toString(),
             pts: [ {x: minX, y0: y0, y1: y1}, {x: maxX, y0: y0, y1: y1}]
