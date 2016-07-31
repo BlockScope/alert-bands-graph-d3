@@ -180,6 +180,20 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
         .y(function (d) { return scaleY(d.y); })
         .interpolate('step-after');
 
+    var seriesScatter = function(data) {
+        data
+            .append("circle")
+            .attr("class", "dot")
+            .attr("r", 3.5)
+            .attr("cx", function (d) {
+                return scaleX(d.x);
+            })
+            .attr("cy", function (d) {
+                return scaleY(d.y);
+            })
+            .attr("fill", "#00f");
+    };
+
     var xAxisBottom = d3.svg.axis()
         .scale(scaleX)
         // "The specified count is only a hint; the scale may return more or fewer values depending on the input domain."
@@ -209,6 +223,7 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
         fixAreaData: fixAreaData,
         varAreaData: varAreaData,
         seriesLine: seriesLine,
+        seriesScatter: seriesScatter,
         fixLine: fixLine,
         varLine: seriesLine,
         fixArea: fixArea,
@@ -283,7 +298,21 @@ var plotLine = function (onPlotBox, tabPlot) {
             .attr('visibility', 'visible');
 
         if (x.series.length > 0) {
-            svg.select('path.series.line').datum(dp.seriesData).attr('d', dp.seriesLine);
+            svg
+                .select('path.series.line')
+                .datum(dp.seriesData)
+                .attr('d', dp.seriesLine);
+
+            if (x.series.length === 1) {
+                var scatter =
+                    svg
+                    .select('g.series.scatter')
+                    .append('g')
+                    .attr('class', 'TODO-DELETE')
+                    .data(dp.seriesData);
+
+                dp.seriesScatter(scatter);
+            }
 
             axisX
                 .filter('.top')
