@@ -16,9 +16,11 @@ var defaultPlotBox = {
 
 var d3TickFormatdM = d3.time.format("%d-%b");
 var d3TimeFormatHM = d3.time.format("%Y-%m-%dT%H:%M");
+var d3TimeFormat_HM = d3.time.format("%Y-%m-%d %H:%M");
 var d3TimeFormatHMS = d3.time.format("%Y-%m-%dT%H:%M:%S");
 var timeToD3HM = function (s) { return d3TimeFormatHM.parse(s); };
 var timeToD3HMS = function (s) { return d3TimeFormatHMS.parse(s); };
+var bisectDate = d3.bisector(function(d) { return d.x; }).left;
 
 var fobsToD3Format = function (xs) {
     return _.map(xs, function (d) { return { x: timeToD3HM(d.ox), y: +d.oy }; });
@@ -217,6 +219,8 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
         .tickFormat(d3.format("s"));
 
     return {
+        scaleX: scaleX,
+        scaleY: scaleY,
         seriesData: seriesData,
         fixLineData: fixLineData,
         varLineData: varLineData,
@@ -274,8 +278,8 @@ var plotLine = function (onPlotBox, tabPlot) {
         var svgId = 'svg#chart-' + id.toString();
         var svg = d3.select(svgId);
 
-        svg.attr('height', paddedHeight);
         svg.attr('width', paddedWidth);
+        svg.attr('height', paddedHeight);
 
         var axis = svg.selectAll('.axis');
         var axisX = axis.filter('.x');
@@ -313,6 +317,97 @@ var plotLine = function (onPlotBox, tabPlot) {
 
                 dp.seriesScatter(scatter);
             }
+
+            var pendingComment = d3.select("#pending-comment");
+
+            // NOTE: Inspiration for drag to position and marker taken from ...
+            // SEE: https://bl.ocks.org/mbostock/4198499
+            // SEE: https://bl.ocks.org/mbostock/3902569
+            d3.selectAll("div.drag").on("mousedown", function() {
+                var mouseUp = function() {
+                    div.classed("active", false);
+                    div.text("Drag to place comment");
+                    w.on("mousemove", null).on("mouseup", null);
+                }
+
+                var movePending = function() {
+                    var n = div.node();
+                    var m = d3.mouse(n);
+                    var x = m[0] - plotBox.padLeft;
+                    var y = m[1] - plotBox.padBottom;
+                    dp.scaleX.clamp(true);
+                    var t = dp.scaleX.invert(x);
+                    var i = bisectDate(dp.seriesData, t, 1);
+                    var d0 = dp.seriesData[i - 1];
+                    var d1 = dp.seriesData[i];
+                    var dx = t - d0.x > d1.x - t ? d1.x : d0.x;
+                    pendingComment.text(d3TimeFormat_HM(dx));
+                }
+
+                var focus = svg.append("g")
+                      .attr("class", "focus")
+                      .style("display", "none");
+
+                focus.append("circle")
+                    .attr("r", 4.5);
+
+                focus.append("text")
+                    .attr("x", 9)
+                    .attr("dy", ".35em");
+
+                var moveFocus = function() {
+                    var n = div.node();
+                    var m = d3.mouse(n);
+                    var x = m[0] - plotBox.padLeft;
+                    var y = m[1] - plotBox.padBottom;
+                    dp.scaleX.clamp(true);
+                    var t = dp.scaleX.invert(x);
+                    var i = bisectDate(dp.seriesData, t, 1);
+                    var d0 = dp.seriesData[i - 1];
+                    var d1 = dp.seriesData[i];
+                    var dx = t - d0.x > d1.x - t ? d1.x : d0.x;
+                    focus.attr("transform", "translate(" + x + "," + y + ")");
+                    focus.select("text").text("<< pending comment >>");
+                };
+
+                var moveDrag = function() {
+                    var n = div.node();
+                    var m = d3.mouse(n);
+                    var x = m[0] - plotBox.padLeft;
+                    var y = m[1] - plotBox.padBottom;
+                    dp.scaleX.clamp(true);
+                    var t = dp.scaleX.invert(x);
+                    var i = bisectDate(dp.seriesData, t, 1);
+                    var d0 = dp.seriesData[i - 1];
+                    var d1 = dp.seriesData[i];
+                    var dx = t - d0.x > d1.x - t ? d1.x : d0.x;
+                    console.log(d3TimeFormat_HM(dx));
+                    div.text('x = ' + x.toString() + ', y = ' + y.toString());
+                }
+
+                var mouseMove= function() {
+                    moveDrag();
+                    movePending();
+                    moveFocus();
+                }
+
+                var div = d3.select(this)
+                    .classed("active", true);
+
+                var w = d3.select(window)
+                    .on("mousemove", mouseMove)
+                    .on("mouseup", mouseUp);
+
+                // NOTE: Disable text dragging
+                d3.event.preventDefault();
+
+                svg.append("rect")
+                    .attr("class", "overlay")
+                    .attr('width', plotBox.width)
+                    .attr('height', plotBox.height)
+                    .on("mouseover", function() { focus.style("display", null); })
+                    .on("mouseout", function() { focus.style("display", "none"); });
+            });
 
             axisX
                 .filter('.top')
