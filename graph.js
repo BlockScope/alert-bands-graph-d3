@@ -330,9 +330,11 @@ var plotLine = function (onPlotBox, tabPlot) {
                     w.on("mousemove", null).on("mouseup", null);
                 }
 
-                var movePending = function() {
+                var move = function() {
                     var n = div.node();
                     var m = d3.mouse(n);
+                    var xRaw = m[0];
+                    var yRaw = m[1];
                     var x = m[0] - plotBox.padLeft;
                     var y = m[1] - plotBox.padBottom;
                     dp.scaleX.clamp(true);
@@ -341,12 +343,28 @@ var plotLine = function (onPlotBox, tabPlot) {
                     var d0 = dp.seriesData[i - 1];
                     var d1 = dp.seriesData[i];
                     var dx = t - d0.x > d1.x - t ? d1.x : d0.x;
-                    pendingComment.text(d3TimeFormat_HM(dx));
-                }
+                    var dy = t - d0.x > d1.x - t ? d1.y : d0.y;
 
-                var focus = svg.append("g")
-                      .attr("class", "focus")
-                      .style("display", "none");
+                    return {
+                        xRaw: xRaw,
+                        x: x,
+                        dx: dx,
+                        y: y,
+                        dy: dy
+                    };
+                };
+
+                var movePending = function(m) {
+                    pendingComment.text(d3TimeFormat_HM(m.dx));
+                };
+
+                var focus =
+                    svg
+                    .select('g.series.scatter')
+                    .append("g")
+                    .attr('class', 'TODO-DELETE')
+                    .attr("class", "focus")
+                    .style("display", "none");
 
                 focus.append("circle")
                     .attr("r", 4.5);
@@ -355,41 +373,21 @@ var plotLine = function (onPlotBox, tabPlot) {
                     .attr("x", 9)
                     .attr("dy", ".35em");
 
-                var moveFocus = function() {
-                    var n = div.node();
-                    var m = d3.mouse(n);
-                    var x = m[0] - plotBox.padLeft;
-                    var y = m[1] - plotBox.padBottom;
-                    dp.scaleX.clamp(true);
-                    var t = dp.scaleX.invert(x);
-                    var i = bisectDate(dp.seriesData, t, 1);
-                    var d0 = dp.seriesData[i - 1];
-                    var d1 = dp.seriesData[i];
-                    var dx = t - d0.x > d1.x - t ? d1.x : d0.x;
-                    focus.attr("transform", "translate(" + x + "," + y + ")");
+                var moveFocus = function(m) {
+                    focus.attr("transform", "translate(" + dp.scaleX(m.dx) + "," + dp.scaleY(m.dy) + ")");
                     focus.select("text").text("<< pending comment >>");
                 };
 
-                var moveDrag = function() {
-                    var n = div.node();
-                    var m = d3.mouse(n);
-                    var x = m[0] - plotBox.padLeft;
-                    var y = m[1] - plotBox.padBottom;
-                    dp.scaleX.clamp(true);
-                    var t = dp.scaleX.invert(x);
-                    var i = bisectDate(dp.seriesData, t, 1);
-                    var d0 = dp.seriesData[i - 1];
-                    var d1 = dp.seriesData[i];
-                    var dx = t - d0.x > d1.x - t ? d1.x : d0.x;
-                    console.log(d3TimeFormat_HM(dx));
-                    div.text('x = ' + x.toString() + ', y = ' + y.toString());
-                }
+                var moveDrag = function(m) {
+                    div.text('x = ' + m.x.toString() + ', y = ' + m.y.toString());
+                };
 
                 var mouseMove= function() {
-                    moveDrag();
-                    movePending();
-                    moveFocus();
-                }
+                    var m = move();
+                    moveDrag(m);
+                    movePending(m);
+                    moveFocus(m);
+                };
 
                 var div = d3.select(this)
                     .classed("active", true);
