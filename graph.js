@@ -324,6 +324,8 @@ var plotLine = function (onPlotBox, tabPlot) {
             // SEE: https://bl.ocks.org/mbostock/4198499
             // SEE: https://bl.ocks.org/mbostock/3902569
             d3.selectAll("div.drag").on("mousedown", function() {
+                d3.selectAll('.TODO-DELETE.COMMENT').remove();
+
                 var mouseUp = function() {
                     div.classed("active", false);
                     div.text("Drag to place comment");
@@ -360,9 +362,10 @@ var plotLine = function (onPlotBox, tabPlot) {
 
                 var focus =
                     svg
-                    .select('g.series.scatter')
+                    .select('g.comment.group')
                     .append("g")
-                    .attr('class', 'TODO-DELETE')
+                    .attr('class', 'TODO-DELETE COMMENT')
+                    .append("g")
                     .attr("class", "focus")
                     .style("display", "none");
 
@@ -372,6 +375,17 @@ var plotLine = function (onPlotBox, tabPlot) {
                 focus.append("text")
                     .attr("x", 9)
                     .attr("dy", ".35em");
+
+                svg
+                    .select('g.comment.group')
+                    .append("g")
+                    .attr('class', 'TODO-DELETE COMMENT')
+                    .append("rect")
+                    .attr("class", "overlay")
+                    .attr('width', plotBox.width)
+                    .attr('height', plotBox.height)
+                    .on("mouseover", function() { focus.style("display", null); })
+                    .on("mouseout", function() { focus.style("display", "none"); });
 
                 var moveFocus = function(m) {
                     focus.attr("transform", "translate(" + dp.scaleX(m.dx) + "," + dp.scaleY(m.dy) + ")");
@@ -398,13 +412,6 @@ var plotLine = function (onPlotBox, tabPlot) {
 
                 // NOTE: Disable text dragging
                 d3.event.preventDefault();
-
-                svg.append("rect")
-                    .attr("class", "overlay")
-                    .attr('width', plotBox.width)
-                    .attr('height', plotBox.height)
-                    .on("mouseover", function() { focus.style("display", null); })
-                    .on("mouseout", function() { focus.style("display", "none"); });
             });
 
             axisX
