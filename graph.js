@@ -239,7 +239,7 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
     };
 };
 
-var plotLine = function (onPlotBox, tabPlot) {
+var plotLine = function (onMark, onPlotBox, tabPlot) {
     if (tabPlot.tab !== "SeriesAsPlot" || tabPlot.plot === null) {
         return;
     }
@@ -343,7 +343,7 @@ var plotLine = function (onPlotBox, tabPlot) {
                     var t = dp.scaleX.invert(x);
                     var i = bisectDate(dp.seriesData, t, 1);
                     var d0 = dp.seriesData[i - 1];
-                    var d1 = dp.seriesData[i];
+                    var d1 = i === dp.seriesData.length ? d0 : dp.seriesData[i];
                     var dx = t - d0.x > d1.x - t ? d1.x : d0.x;
                     var dy = t - d0.x > d1.x - t ? d1.y : d0.y;
 
@@ -354,10 +354,6 @@ var plotLine = function (onPlotBox, tabPlot) {
                         y: y,
                         dy: dy
                     };
-                };
-
-                var movePending = function(m) {
-                    pendingComment.text(d3TimeFormat_HM(m.dx));
                 };
 
                 var focus =
@@ -399,8 +395,8 @@ var plotLine = function (onPlotBox, tabPlot) {
                 var mouseMove= function() {
                     var m = move();
                     moveDrag(m);
-                    movePending(m);
                     moveFocus(m);
+                    onMark(m.dx.valueOf());
                 };
 
                 var div = d3.select(this)
