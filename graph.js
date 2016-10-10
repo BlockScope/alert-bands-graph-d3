@@ -246,7 +246,9 @@ var drawLabel = function (msg, label) {
 
     label.append("text")
         .attr("x", 9)
-        .attr("dy", ".35em");
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(-10, -100, -100)")
+        .attr("text-anchor", "middle");
 
     label.select("text").text(msg);
 };
