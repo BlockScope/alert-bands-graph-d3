@@ -15,15 +15,16 @@ var defaultPlotBox = {
 };
 
 var d3TickFormatdM = d3.time.format("%d-%b");
-var d3TimeFormatHM = d3.time.format("%Y-%m-%dT%H:%M");
+var d3TimeFormatTHM = d3.time.format("%Y-%m-%dT%H:%M");
 var d3TimeFormat_HM = d3.time.format("%Y-%m-%d %H:%M");
-var d3TimeFormatHMS = d3.time.format("%Y-%m-%dT%H:%M:%S");
-var timeToD3HM = function (s) { return d3TimeFormatHM.parse(s); };
-var timeToD3HMS = function (s) { return d3TimeFormatHMS.parse(s); };
+var d3TimeFormatTHMS = d3.time.format("%Y-%m-%dT%H:%M:%S");
+var timeToD3_HM = function (s) { return d3TimeFormat_HM.parse(s); };
+var timeToD3THM = function (s) { return d3TimeFormatTHM.parse(s); };
+var timeToD3HMS = function (s) { return d3TimeFormatTHMS.parse(s); };
 var bisectDate = d3.bisector(function(d) { return d.x; }).left;
 
 var fobsToD3Format = function (xs) {
-    return _.map(xs, function (d) { return { x: timeToD3HM(d.ox), y: +d.oy }; });
+    return _.map(xs, function (d) { return { x: timeToD3THM(d.ox), y: +d.oy }; });
 }
 
 var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, areasOfFixAs, linesOfVarTs, areasOfVarAs) {
@@ -300,6 +301,39 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
         svg.select('#y-axis-label')
             .attr('transform', 'translate(10,' + (plotBox.height / 2.0) + ') rotate(-90)')
             .attr('visibility', 'visible');
+
+        if (x.comments.length > 0 && dp.seriesData.length > 0) {
+            _.each(x.comments, function (c, ii) {
+                var t = timeToD3_HM(c.ox);
+                var i = bisectDate(dp.seriesData, t, 1);
+                var d0 = dp.seriesData[i - 1];
+                var d1 = i === dp.seriesData.length ? d0 : dp.seriesData[i];
+                var dx = t - d0.x > d1.x - t ? d1.x : d0.x;
+                var dy = t - d0.x > d1.x - t ? d1.y : d0.y;
+
+                var nthComment = svg
+                    .select('g.comment.group')
+                    .select('g#comment-' + (ii + 1).toString());
+
+                var label =
+                    nthComment
+                    .append("g")
+                    .attr('class', 'TODO-DELETE COMMENT')
+                    .append("g")
+                    .attr("class", "focus")
+                    .style("background-color", "brown");
+
+                label.append("circle")
+                    .attr("r", 4.5);
+
+                label.append("text")
+                    .attr("x", 9)
+                    .attr("dy", ".35em");
+
+                label.attr("transform", "translate(" + dp.scaleX(dx) + "," + dp.scaleY(dy) + ")");
+                label.select("text").text(c.oy);
+            });
+        }
 
         if (x.series.length > 0) {
             svg
