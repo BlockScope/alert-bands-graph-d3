@@ -240,6 +240,21 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
     };
 };
 
+var drawLabel = function (msg, label) {
+    label.append("circle")
+        .attr("r", 4.5);
+
+    label.append("text")
+        .attr("x", 9)
+        .attr("dy", ".35em");
+
+    label.select("text").text(msg);
+};
+
+var moveLabel = function (dp, dx, dy, label) {
+    label.attr("transform", "translate(" + dp.scaleX(dx) + "," + dp.scaleY(dy) + ")");
+};
+
 var plotLine = function (onMark, onPlotBox, tabPlot) {
     if (tabPlot.tab !== "SeriesAsPlot" || tabPlot.plot === null) {
         return;
@@ -323,15 +338,8 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                     .attr("class", "focus")
                     .style("background-color", "brown");
 
-                label.append("circle")
-                    .attr("r", 4.5);
-
-                label.append("text")
-                    .attr("x", 9)
-                    .attr("dy", ".35em");
-
-                label.attr("transform", "translate(" + dp.scaleX(dx) + "," + dp.scaleY(dy) + ")");
-                label.select("text").text(c.oy);
+                drawLabel(c.oy, label);
+                moveLabel(dp, dx, dy, label);
             });
         }
 
@@ -399,12 +407,7 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                     .attr("class", "focus")
                     .style("display", "none");
 
-                focus.append("circle")
-                    .attr("r", 4.5);
-
-                focus.append("text")
-                    .attr("x", 9)
-                    .attr("dy", ".35em");
+                drawLabel(msg, label);
 
                 svg
                     .select('g.comment.group')
@@ -418,8 +421,7 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                     .on("mouseout", function() { focus.style("display", "none"); });
 
                 var moveFocus = function(m) {
-                    focus.attr("transform", "translate(" + dp.scaleX(m.dx) + "," + dp.scaleY(m.dy) + ")");
-                    focus.select("text").text("<< pending comment >>");
+                    moveLabel(dp, m.dx, m.dy, label);
                 };
 
                 var moveDrag = function(m) {
