@@ -297,6 +297,35 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
         svg.attr('width', paddedWidth);
         svg.attr('height', paddedHeight);
 
+        if (x.comments.length > 0 && dp.seriesData.length > 0) {
+            var commentGroup = svg.select('g.comment.group');
+            _.each(x.comments, function (c, ii) {
+                var t = timeToD3_HM(c.ox);
+                var i = bisectDate(dp.seriesData, t, 1);
+                var d0 = dp.seriesData[i - 1];
+                var d1 = i === dp.seriesData.length ? d0 : dp.seriesData[i];
+                var dx = t - d0.x > d1.x - t ? d1.x : d0.x;
+                var dy = t - d0.x > d1.x - t ? d1.y : d0.y;
+
+                var nthSelector = 'g#comment-' + (ii + 1).toString();
+                var nthComment = commentGroup.select(nthSelector);
+
+                if (nthComment && nthComment[0] && nthComment[0][0]) {
+                    var label =
+                        nthComment
+                        .append("g")
+                        .attr('class', 'TODO-DELETE COMMENT')
+                        .append("g")
+                        .attr("class", "focus");
+
+                    if (label && label[0] && label[0][0]) {
+                        drawLabel(c.oy, label);
+                        moveLabel(dp, dx, dy, label);
+                    }
+                }
+            });
+        }
+
         var axis = svg.selectAll('.axis');
         var axisX = axis.filter('.x');
         var axisY = axis.filter('.y');
@@ -316,32 +345,6 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
         svg.select('#y-axis-label')
             .attr('transform', 'translate(10,' + (plotBox.height / 2.0) + ') rotate(-90)')
             .attr('visibility', 'visible');
-
-        if (x.comments.length > 0 && dp.seriesData.length > 0) {
-            _.each(x.comments, function (c, ii) {
-                var t = timeToD3_HM(c.ox);
-                var i = bisectDate(dp.seriesData, t, 1);
-                var d0 = dp.seriesData[i - 1];
-                var d1 = i === dp.seriesData.length ? d0 : dp.seriesData[i];
-                var dx = t - d0.x > d1.x - t ? d1.x : d0.x;
-                var dy = t - d0.x > d1.x - t ? d1.y : d0.y;
-
-                var nthComment = svg
-                    .select('g.comment.group')
-                    .select('g#comment-' + (ii + 1).toString());
-
-                var label =
-                    nthComment
-                    .append("g")
-                    .attr('class', 'TODO-DELETE COMMENT')
-                    .append("g")
-                    .attr("class", "focus")
-                    .style("background-color", "brown");
-
-                drawLabel(c.oy, label);
-                moveLabel(dp, dx, dy, label);
-            });
-        }
 
         if (x.series.length > 0) {
             svg
