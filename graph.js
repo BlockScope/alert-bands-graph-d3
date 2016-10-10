@@ -3,6 +3,7 @@
 var d3 = require('d3');
 var $ = require('jquery');
 var _ = require('underscore');
+var ringNote = require('./ringnote');
 
 var bufferFractionMinY = 0.1;
 var bufferFractionMaxY = 0.1;
@@ -125,6 +126,7 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
         // NOTE: For the domain item 0 < item 1 but for the thresholds item 0 > item 1.
         var c = x.color;
         var hex = d3.rgb(c.red, c.green, c.blue).toString();
+
         if (x.y0 === null && x.y1 !== null) {
             var topY = domainY[1];
             var bottoms = fobsToD3Format(x.y1);
@@ -299,6 +301,7 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
 
         if (x.comments.length > 0 && dp.seriesData.length > 0) {
             var commentGroup = svg.select('g.comment.group');
+            var noter = d3.ringNote();
             _.each(x.comments, function (c, ii) {
                 var t = timeToD3_HM(c.ox);
                 var i = bisectDate(dp.seriesData, t, 1);
@@ -322,6 +325,24 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                         drawLabel(c.oy, label);
                         moveLabel(dp, dx, dy, label);
                     }
+
+                    var annotations = [
+                      {
+                        "cx": 40,
+                        "cy": 100,
+                        "r": 25,
+                        "text": "Something important you should know",
+                        "textWidth": 150,
+                        "textOffset": [35, 40] 
+                      }
+                    ];
+
+                    nthComment.append("g")
+                        .attr("class", "annotations")
+                        .call(noter, annotations)
+                        .selectAll(".annotation circle")
+                        .style("fill", "none");
+
                 }
             });
         }
