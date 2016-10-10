@@ -241,29 +241,29 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
 };
 
 var drawLabel = function (msg, label) {
-    label.append("circle")
-        .attr("r", 4.5);
+    label.append('circle')
+        .attr('r', 4.5);
 
-    label.append("text")
-        .attr("x", 9)
-        .attr("dy", ".35em")
-        .attr("transform", "rotate(-10, -100, -100)")
-        .attr("text-anchor", "middle");
+    label.append('text')
+        .attr('x', 9)
+        .attr('dy', ".35em")
+        .attr('transform', 'rotate(-10, -100, -100)')
+        .attr('text-anchor', 'middle');
 
     label.select("text").text(msg);
 };
 
 var moveLabel = function (dp, dx, dy, label) {
-    label.attr("transform", "translate(" + dp.scaleX(dx) + "," + dp.scaleY(dy) + ")");
+    label.attr('transform', 'translate(' + dp.scaleX(dx) + "," + dp.scaleY(dy) + ')');
 };
 
 var plotLine = function (onMark, onPlotBox, tabPlot) {
-    if (tabPlot.tab !== "SeriesAsPlot" || tabPlot.plot === null) {
+    if (tabPlot.tab !== 'SeriesAsPlot' || tabPlot.plot === null) {
         return;
     }
 
     var x = tabPlot.plot;
-    var el = $("#chart-0");
+    var el = $('#chart-0');
     var w = el.parent().width();
     var h = Math.floor(w * 0.5);
     var padVert = 30;
