@@ -298,11 +298,21 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
 
         svg.attr('width', paddedWidth);
         svg.attr('height', paddedHeight);
+        var seriesLength = dp.seriesData.length;
 
-        if (x.comments.length > 0 && dp.seriesData.length > 0) {
+        if (x.comments.length > 0 && seriesLength > 0) {
             var commentGroup = svg.select('g.comment.group');
             _.each(x.comments, function (c, ii) {
                 var t = timeToD3_HM(c.ox);
+                var t0 = dp.seriesData[0].x;
+                var t1 = dp.seriesData[seriesLength - 1].x;
+
+                if (t < t0 || t1 < t) {
+                    // NOTE: Don't draw the comment if it is outside the
+                    // selected time period.
+                    return;
+                }
+
                 var i = bisectDate(dp.seriesData, t, 1);
                 var d0 = dp.seriesData[i - 1];
                 var d1 = i === dp.seriesData.length ? d0 : dp.seriesData[i];
