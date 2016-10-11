@@ -240,13 +240,13 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
     };
 };
 
-var drawLabel = function (msg, label) {
+var drawLabel = function (r, x, dy, msg, label) {
     label.append('circle')
-        .attr('r', 4.5);
+        .attr('r', r);
 
     label.append('text')
-        .attr('x', 9)
-        .attr('dy', '.35em')
+        .attr('x', x)
+        .attr('dy', dy)
         .attr('transform', 'rotate(-10, -100, -100)')
         .attr('text-anchor', 'middle');
 
@@ -321,7 +321,7 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                         .attr('class', 'focus');
 
                     if (label && label[0] && label[0][0]) {
-                        drawLabel(c.oy, label);
+                        drawLabel(6, 9, '.3em', c.oy, label);
                         moveLabel(dp, dx, dy, label);
                     }
                 }
@@ -371,7 +371,7 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
             // SEE: https://bl.ocks.org/mbostock/4198499
             // SEE: https://bl.ocks.org/mbostock/3902569
             d3.selectAll('div.drag').on('mousedown', function() {
-                d3.selectAll('.TODO-DELETE.COMMENT').remove();
+                d3.selectAll('.TODO-DELETE.DRAG.COMMENT').remove();
 
                 var mouseUp = function() {
                     div.classed('active', false);
@@ -407,12 +407,12 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                     svg
                     .select('g.comment.group')
                     .append('g')
-                    .attr('class', 'TODO-DELETE COMMENT')
+                    .attr('class', 'TODO-DELETE DRAG COMMENT')
                     .append('g')
                     .attr('class', 'focus')
                     .style('display', 'none');
 
-                drawLabel('<< pending comment >>', focus);
+                drawLabel(8, 9, '-.3em', '<< affix here >>', focus);
 
                 svg
                     .select('g.comment.group')
