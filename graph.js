@@ -436,7 +436,7 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                     .on('mouseout', function() { focus.style('display', 'none'); });
 
                 var showDragXY = function(x, y, tag) {
-                    tag.text('x = ' + x.toString() + ', y = ' + y.toString());
+                    tag.text('x = ' + x.toFixed().toString() + ', y = ' + y.toFixed().toString());
                 };
 
                 var mouseMove= function() {
