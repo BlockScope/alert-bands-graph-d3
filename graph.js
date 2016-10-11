@@ -412,7 +412,12 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                     .attr("class", "focus")
                     .style("display", "none");
 
-                drawLabel(msg, label);
+                focus.append("circle")
+                    .attr("r", 4.5);
+
+                focus.append("text")
+                    .attr("x", 9)
+                    .attr("dy", ".35em");
 
                 svg
                     .select('g.comment.group')
@@ -426,7 +431,8 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                     .on("mouseout", function() { focus.style("display", "none"); });
 
                 var moveFocus = function(m) {
-                    moveLabel(dp, m.dx, m.dy, label);
+                    focus.attr("transform", "translate(" + dp.scaleX(m.dx) + "," + dp.scaleY(m.dy) + ")");
+                    focus.select("text").text("<< pending comment >>");
                 };
 
                 var moveDrag = function(m) {
