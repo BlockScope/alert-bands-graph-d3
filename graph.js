@@ -412,12 +412,7 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                     .attr('class', 'focus')
                     .style('display', 'none');
 
-                focus.append('circle')
-                    .attr('r', 4.5);
-
-                focus.append('text')
-                    .attr('x', 9)
-                    .attr('dy', '.35em');
+                drawLabel('<< pending comment >>', focus);
 
                 svg
                     .select('g.comment.group')
@@ -430,19 +425,14 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                     .on('mouseover', function() { focus.style('display', null); })
                     .on('mouseout', function() { focus.style('display', 'none'); });
 
-                var moveFocus = function(m) {
-                    focus.attr('transform', 'translate(' + dp.scaleX(m.dx) + ',' + dp.scaleY(m.dy) + ')');
-                    focus.select('text').text('<< pending comment >>');
-                };
-
-                var moveDrag = function(m) {
-                    div.text('x = ' + m.x.toString() + ', y = ' + m.y.toString());
+                var showDragXY = function(x, y, tag) {
+                    tag.text('x = ' + x.toString() + ', y = ' + y.toString());
                 };
 
                 var mouseMove= function() {
                     var m = move();
-                    moveDrag(m);
-                    moveFocus(m);
+                    showDragXY(m.x, m.y, div);
+                    moveLabel(dp, m.dx, m.dy, focus);
                     onMark(m.dx.valueOf());
                 };
 
