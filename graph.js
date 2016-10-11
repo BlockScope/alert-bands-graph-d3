@@ -14,10 +14,10 @@ var defaultPlotBox = {
     padBottom: 30
 };
 
-var d3TickFormatdM = d3.time.format("%d-%b");
-var d3TimeFormatTHM = d3.time.format("%Y-%m-%dT%H:%M");
-var d3TimeFormat_HM = d3.time.format("%Y-%m-%d %H:%M");
-var d3TimeFormatTHMS = d3.time.format("%Y-%m-%dT%H:%M:%S");
+var d3TickFormatdM = d3.time.format('%d-%b');
+var d3TimeFormatTHM = d3.time.format('%Y-%m-%dT%H:%M');
+var d3TimeFormat_HM = d3.time.format('%Y-%m-%d %H:%M');
+var d3TimeFormatTHMS = d3.time.format('%Y-%m-%dT%H:%M:%S');
 var timeToD3_HM = function (s) { return d3TimeFormat_HM.parse(s); };
 var timeToD3THM = function (s) { return d3TimeFormatTHM.parse(s); };
 var timeToD3HMS = function (s) { return d3TimeFormatTHMS.parse(s); };
@@ -99,7 +99,7 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
     var fixAreaData = _.map(areasOfFixAs, function (x) {
         if (x === null) {
             return {
-                color: "#000",
+                color: '#000',
                 pts: []
             };
         }
@@ -117,7 +117,7 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
     var varAreaData = _.map(areasOfVarAs, function (x) {
         if (x === null) {
             return {
-                color: "#000",
+                color: '#000',
                 pts: []
             };
         }
@@ -185,39 +185,39 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
 
     var seriesScatter = function(data) {
         data
-            .append("circle")
-            .attr("class", "dot")
-            .attr("r", 3.5)
-            .attr("cx", function (d) {
+            .append('circle')
+            .attr('class', 'dot')
+            .attr('r', 3.5)
+            .attr('cx', function (d) {
                 return scaleX(d.x);
             })
-            .attr("cy", function (d) {
+            .attr('cy', function (d) {
                 return scaleY(d.y);
             })
-            .attr("fill", "#00f");
+            .attr('fill', '#00f');
     };
 
     var xAxisBottom = d3.svg.axis()
         .scale(scaleX)
-        // "The specified count is only a hint; the scale may return more or fewer values depending on the input domain."
+        // 'The specified count is only a hint; the scale may return more or fewer values depending on the input domain.'
         // SOURCE: https://github.com/mbostock/d3/wiki/Time-Scales
         .ticks(6)
-        .orient("bottom");
+        .orient('bottom');
 
     var xAxisTop = d3.svg.axis()
         .scale(scaleX)
         .ticks(0)
-        .orient("top");
+        .orient('top');
 
     var yAxisLeft = d3.svg.axis()
         .scale(scaleY)
-        .orient("left")
-        .tickFormat(d3.format("s"));
+        .orient('left')
+        .tickFormat(d3.format('s'));
 
     var yAxisRight = d3.svg.axis()
         .scale(scaleY)
-        .orient("right")
-        .tickFormat(d3.format("s"));
+        .orient('right')
+        .tickFormat(d3.format('s'));
 
     return {
         scaleX: scaleX,
@@ -246,15 +246,15 @@ var drawLabel = function (msg, label) {
 
     label.append('text')
         .attr('x', 9)
-        .attr('dy', ".35em")
+        .attr('dy', '.35em')
         .attr('transform', 'rotate(-10, -100, -100)')
         .attr('text-anchor', 'middle');
 
-    label.select("text").text(msg);
+    label.select('text').text(msg);
 };
 
 var moveLabel = function (dp, dx, dy, label) {
-    label.attr('transform', 'translate(' + dp.scaleX(dx) + "," + dp.scaleY(dy) + ')');
+    label.attr('transform', 'translate(' + dp.scaleX(dx) + ',' + dp.scaleY(dy) + ')');
 };
 
 var plotLine = function (onMark, onPlotBox, tabPlot) {
@@ -315,10 +315,10 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                 if (nthComment && nthComment[0] && nthComment[0][0]) {
                     var label =
                         nthComment
-                        .append("g")
+                        .append('g')
                         .attr('class', 'TODO-DELETE COMMENT')
-                        .append("g")
-                        .attr("class", "focus");
+                        .append('g')
+                        .attr('class', 'focus');
 
                     if (label && label[0] && label[0][0]) {
                         drawLabel(c.oy, label);
@@ -365,18 +365,18 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                 dp.seriesScatter(scatter);
             }
 
-            var pendingComment = d3.select("#pending-comment");
+            var pendingComment = d3.select('#pending-comment');
 
             // NOTE: Inspiration for drag to position and marker taken from ...
             // SEE: https://bl.ocks.org/mbostock/4198499
             // SEE: https://bl.ocks.org/mbostock/3902569
-            d3.selectAll("div.drag").on("mousedown", function() {
+            d3.selectAll('div.drag').on('mousedown', function() {
                 d3.selectAll('.TODO-DELETE.COMMENT').remove();
 
                 var mouseUp = function() {
-                    div.classed("active", false);
-                    div.text("Drag to place comment");
-                    w.on("mousemove", null).on("mouseup", null);
+                    div.classed('active', false);
+                    div.text('Drag to place comment');
+                    w.on('mousemove', null).on('mouseup', null);
                 }
 
                 var move = function() {
@@ -406,33 +406,33 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                 var focus =
                     svg
                     .select('g.comment.group')
-                    .append("g")
+                    .append('g')
                     .attr('class', 'TODO-DELETE COMMENT')
-                    .append("g")
-                    .attr("class", "focus")
-                    .style("display", "none");
+                    .append('g')
+                    .attr('class', 'focus')
+                    .style('display', 'none');
 
-                focus.append("circle")
-                    .attr("r", 4.5);
+                focus.append('circle')
+                    .attr('r', 4.5);
 
-                focus.append("text")
-                    .attr("x", 9)
-                    .attr("dy", ".35em");
+                focus.append('text')
+                    .attr('x', 9)
+                    .attr('dy', '.35em');
 
                 svg
                     .select('g.comment.group')
-                    .append("g")
+                    .append('g')
                     .attr('class', 'TODO-DELETE COMMENT')
-                    .append("rect")
-                    .attr("class", "overlay")
+                    .append('rect')
+                    .attr('class', 'overlay')
                     .attr('width', plotBox.width)
                     .attr('height', plotBox.height)
-                    .on("mouseover", function() { focus.style("display", null); })
-                    .on("mouseout", function() { focus.style("display", "none"); });
+                    .on('mouseover', function() { focus.style('display', null); })
+                    .on('mouseout', function() { focus.style('display', 'none'); });
 
                 var moveFocus = function(m) {
-                    focus.attr("transform", "translate(" + dp.scaleX(m.dx) + "," + dp.scaleY(m.dy) + ")");
-                    focus.select("text").text("<< pending comment >>");
+                    focus.attr('transform', 'translate(' + dp.scaleX(m.dx) + ',' + dp.scaleY(m.dy) + ')');
+                    focus.select('text').text('<< pending comment >>');
                 };
 
                 var moveDrag = function(m) {
@@ -447,11 +447,11 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                 };
 
                 var div = d3.select(this)
-                    .classed("active", true);
+                    .classed('active', true);
 
                 var w = d3.select(window)
-                    .on("mousemove", mouseMove)
-                    .on("mouseup", mouseUp);
+                    .on('mousemove', mouseMove)
+                    .on('mouseup', mouseUp);
 
                 // NOTE: Disable text dragging
                 d3.event.preventDefault();
@@ -515,7 +515,7 @@ var rgb = function (onRgbToHex, x) {
     var altColor = rgb.hsl().brighter(1.4).toString();
 
     // NOTE: Avoid brightening to white.
-    if (altColor == "#ffffff") {
+    if (altColor == '#ffffff') {
         var hc = rgb.hsl();
         var hue = hc.h + 180 % 360;
         altColor = d3.hsl(hue, hc.s, hc.l).toString();
