@@ -1,6 +1,7 @@
 'use strict';
 
 var d3 = require('d3');
+require('d3-time-format');
 var $ = require('jquery');
 var _ = require('underscore');
 
@@ -14,10 +15,10 @@ var defaultPlotBox = {
     padBottom: 30
 };
 
-var d3TickFormatdM = d3.time.format('%d-%b');
-var d3TimeFormatTHM = d3.time.format('%Y-%m-%dT%H:%M');
-var d3TimeFormat_HM = d3.time.format('%Y-%m-%d %H:%M');
-var d3TimeFormatTHMS = d3.time.format('%Y-%m-%dT%H:%M:%S');
+var d3TickFormatdM = d3.timeFormat('%d-%b');
+var d3TimeFormatTHM = d3.timeFormat('%Y-%m-%dT%H:%M');
+var d3TimeFormat_HM = d3.timeFormat('%Y-%m-%d %H:%M');
+var d3TimeFormatTHMS = d3.timeFormat('%Y-%m-%dT%H:%M:%S');
 var timeToD3_HM = function (s) { return d3TimeFormat_HM.parse(s); };
 var timeToD3THM = function (s) { return d3TimeFormatTHM.parse(s); };
 var timeToD3HMS = function (s) { return d3TimeFormatTHMS.parse(s); };
