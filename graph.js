@@ -72,8 +72,17 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
     var minY = d3.min([minFix, minVar, minSeries]);
     var maxY = d3.max([maxFix, maxVar, maxSeries]);
 
-    // NOTE: Allow for some height above the maximum.
     var rangeY = (maxY - minY);
+    if (rangeY === 0.0) {
+        switch (minY) {
+            case 0.0:
+                rangeY = 2.0;
+                break;
+
+            default:
+                rangeY = 2.0 * minY;
+        }
+    }
 
     // NOTE: We're used to seeing zero coincident with the x-axis line so let's
     // keep that going if y-min is zero. I need to buffer thresholds though so
@@ -88,9 +97,21 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
     var maxVarBuffered = maxVar + bufferMaxY;
     maxY = d3.max([maxFixBuffered, maxVarBuffered, maxY]);
 
-    // NOTE: Avoid a domain such as [0, 0].
+    // NOTE: Avoid a domain such as [0, 0] or [15k, 15k] and avoid d3 arbitrarily
+    // picking a small range around a flat line, eg. 15.125k .. 15.126k.
     if (minY === maxY) {
-        maxY = minY + 1.0;
+        var expansion = function () {
+            switch (minY) {
+                case 0.0:
+                    return 1.0;
+
+                default:
+                    return (0.5 * rangeY);
+            }
+        }();
+
+        maxY = minY + expansion;
+        minY = minY - expansion;
     }
 
     var domainY = [minY, maxY];
