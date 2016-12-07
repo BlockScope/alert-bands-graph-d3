@@ -381,6 +381,18 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
             .attr('class', 'TODO-DELETE')
             .call(dp.yAxisRight);
 
+        axisX
+            .filter('.top')
+            .append('g')
+            .attr('class', 'TODO-DELETE')
+            .call(dp.xAxisTop);
+
+        axisX
+            .filter('.bottom')
+            .append('g')
+            .attr('class', 'TODO-DELETE')
+            .call(dp.xAxisBottom);
+
         svg.select('#y-axis-label')
             .attr('transform', 'translate(10,' + (plotBox.height / 2.0) + ') rotate(-90)')
             .attr('visibility', 'visible');
@@ -483,18 +495,6 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                 // NOTE: Disable text dragging
                 d3.event.preventDefault();
             });
-
-            axisX
-                .filter('.top')
-                .append('g')
-                .attr('class', 'TODO-DELETE')
-                .call(dp.xAxisTop);
-
-            axisX
-                .filter('.bottom')
-                .append('g')
-                .attr('class', 'TODO-DELETE')
-                .call(dp.xAxisBottom);
         }
 
         svg.selectAll('path.fixt.area').data(dp.fixAreaData)
