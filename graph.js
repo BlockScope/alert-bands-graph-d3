@@ -72,6 +72,12 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
     var minY = d3.min([minFix, minVar, minSeries]);
     var maxY = d3.max([maxFix, maxVar, maxSeries]);
 
+    // NOTE: If I don't have anything for y, then default to a [0, 0] y-domain.
+    if ((_.isNumber(minY) && _.isNumber(maxY)) === false) {
+        minY = 0;
+        maxY = 0;
+    }
+
     var rangeY = (maxY - minY);
     if (rangeY === 0.0) {
         switch (minY) {
