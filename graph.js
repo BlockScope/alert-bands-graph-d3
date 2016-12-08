@@ -394,8 +394,7 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
             .call(dp.xAxisBottom);
 
         svg.select('#y-axis-label')
-            .attr('transform', 'translate(10,' + (plotBox.height / 2.0) + ') rotate(-90)')
-            .attr('visibility', 'visible');
+            .attr('transform', 'translate(10,' + (plotBox.height / 2.0) + ') rotate(-90)');
 
         if (x.series.length > 0) {
             svg
