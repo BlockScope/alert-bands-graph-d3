@@ -327,6 +327,43 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
         svg.attr('height', paddedHeight);
         var seriesLength = dp.seriesData.length;
 
+        if (seriesLength > 0) {
+            var overlay =
+                svg
+                .selectAll('.xy.overlay')
+                .append('g')
+                .attr('class', 'TODO-DELETE OVERLAY')
+                .append('g')
+                .attr('class', 'focus');
+
+            svg.on('mousemove', function () {
+                var t0 = dp.seriesData[0].x;
+                var t1 = dp.seriesData[seriesLength - 1].x;
+                var m = d3.mouse(this);
+                var xRaw = m[0];
+                var x = m[0] - plotBox.padLeft;
+                dp.scaleX.clamp(true);
+                var t = dp.scaleX.invert(x);
+
+                if (t < t0 || t1 < t) {
+                    // NOTE: Don't draw the overlay if it is outside the
+                    // selected time period.
+                    return;
+                }
+
+                var i = bisectDate(dp.seriesData, t, 1);
+                var d0 = dp.seriesData[i - 1];
+                var d1 = i === dp.seriesData.length ? d0 : dp.seriesData[i];
+                var dx = t - d0.x > d1.x - t ? d1.x : d0.x;
+                var dy = t - d0.x > d1.x - t ? d1.y : d0.y;
+
+                if (overlay && overlay[0] && overlay[0][0]) {
+                    drawLabel(6, 9, '.3em', d1.oy, overlay);
+                    moveLabel(dp, dx, dy, overlay);
+                }
+            });
+        }
+
         if (x.comments.length > 0 && seriesLength > 0) {
             var commentGroup = svg.select('g.comment.group');
             _.each(x.comments, function (c, ii) {
