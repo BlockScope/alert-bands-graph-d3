@@ -390,8 +390,21 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                 var dy = t - d0.x > d1.x - t ? d1.y : d0.y;
 
                 if (overlay && overlay[0] && overlay[0][0]) {
-                    let day = d1.x.toLocaleDateString('en-NZ');
-                    let hour = d1.x.toLocaleTimeString('en-NZ');
+                    var dayOptions = {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                        year: undefined
+                    };
+
+                    var hourOptions = {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: undefined
+                    };
+
+                    let day = d1.x.toLocaleDateString('en-NZ', dayOptions);
+                    let hour = d1.x.toLocaleTimeString('en-NZ', hourOptions);
                     let msgY = d1.y.toString() + ' ' + yUnit;
                     drawOverlay(6, 9, '.3em', day, hour, msgY, overlay);
                     moveLabel(dp, dx, dy, overlay);
