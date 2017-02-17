@@ -326,6 +326,7 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
     var padVert = 30;
     var paddedHeight = h + (4 * padVert);
     var paddedWidth = w;
+    var yUnit = x.yUnit;
 
     var plotBox = {
         width: Math.floor(w || defaultPlotBox.width),
@@ -391,7 +392,7 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                 if (overlay && overlay[0] && overlay[0][0]) {
                     let day = d1.x.toLocaleDateString('en-NZ');
                     let hour = d1.x.toLocaleTimeString('en-NZ');
-                    let msgY = d1.y.toString()
+                    let msgY = d1.y.toString() + ' ' + yUnit;
                     drawOverlay(6, 9, '.3em', day, hour, msgY, overlay);
                     moveLabel(dp, dx, dy, overlay);
                 }
