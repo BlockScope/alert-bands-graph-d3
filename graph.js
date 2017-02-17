@@ -267,6 +267,35 @@ var mkLinePath = function (width, height, minX, maxX, series, linesOfFixTs, area
     };
 };
 
+var drawOverlay = function (r, x, dy, day, hour, msgY, label) {
+    label.append('circle')
+        .attr('r', r);
+
+    label.append('text')
+        .attr('id', 'x-overlay-day')
+        .attr('x', x)
+        .attr('dy', dy)
+        .attr('transform', 'translate(0, 40)')
+        .attr('text-anchor', 'left');
+
+    label.append('text')
+        .attr('id', 'x-overlay-hour')
+        .attr('x', x)
+        .attr('dy', dy)
+        .attr('transform', 'translate(0, 20)')
+        .attr('text-anchor', 'left');
+
+    label.append('text')
+        .attr('id', 'y-overlay')
+        .attr('x', x)
+        .attr('dy', dy)
+        .attr('text-anchor', 'left');
+
+    label.select('#x-overlay-day').text(day);
+    label.select('#x-overlay-hour').text(hour);
+    label.select('#y-overlay').text(msgY);
+};
+
 var drawLabel = function (r, x, dy, msg, label) {
     label.append('circle')
         .attr('r', r);
@@ -328,15 +357,16 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
         var seriesLength = dp.seriesData.length;
 
         if (seriesLength > 0) {
-            var overlay =
-                svg
-                .selectAll('.xy.overlay')
-                .append('g')
-                .attr('class', 'TODO-DELETE OVERLAY')
-                .append('g')
-                .attr('class', 'focus');
-
             svg.on('mousemove', function () {
+                d3.selectAll('.TODO-DELETE.OVERLAY').remove();
+                var overlay =
+                    svg
+                    .selectAll('.xy.overlay')
+                    .append('g')
+                    .attr('class', 'TODO-DELETE OVERLAY')
+                    .append('g')
+                    .attr('class', 'focus');
+
                 var t0 = dp.seriesData[0].x;
                 var t1 = dp.seriesData[seriesLength - 1].x;
                 var m = d3.mouse(this);
@@ -358,7 +388,10 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                 var dy = t - d0.x > d1.x - t ? d1.y : d0.y;
 
                 if (overlay && overlay[0] && overlay[0][0]) {
-                    drawLabel(6, 9, '.3em', d1.oy, overlay);
+                    let day = d1.x.toLocaleDateString('en-NZ');
+                    let hour = d1.x.toLocaleTimeString('en-NZ');
+                    let msgY = d1.y.toString()
+                    drawOverlay(6, 9, '.3em', day, hour, msgY, overlay);
                     moveLabel(dp, dx, dy, overlay);
                 }
             });
