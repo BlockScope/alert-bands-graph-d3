@@ -314,6 +314,55 @@ var moveLabel = function (dp, dx, dy, label) {
     label.attr('transform', 'translate(' + dp.scaleX(dx) + ',' + dp.scaleY(dy) + ')');
 };
 
+// SEE: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString
+var canLocaleDate = function () {
+    try {
+        new Date().toLocaleDateString('i');
+    } catch (e) {
+        return e.name === 'RangeError';
+    }
+
+    return false;
+}
+
+var canLocaleTime = function () {
+    try {
+        new Date().toLocaleTimeString('i');
+    } catch (e) {
+        return e.name === 'RangeError';
+    }
+
+    return false;
+}
+
+var dayHour = function (x) {
+    let dayOptions = {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: undefined
+    };
+
+    let hourOptions = {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: undefined
+    };
+
+    let day = canLocaleDate()
+        ? x.toLocaleDateString('en-NZ', dayOptions)
+        : x.toDateString();
+
+    let hour = canLocaleTime()
+        ? x.toLocaleTimeString('en-NZ', hourOptions)
+        : x.toTimeString();
+
+    return {
+        day: day,
+        hour: hour
+    };
+}
+
 var plotLine = function (onMark, onPlotBox, tabPlot) {
     if (tabPlot.tab !== 'SeriesAsPlot' || tabPlot.plot === null) {
         return;
@@ -390,21 +439,7 @@ var plotLine = function (onMark, onPlotBox, tabPlot) {
                 var dy = t - d0.x > d1.x - t ? d1.y : d0.y;
 
                 if (overlay && overlay[0] && overlay[0][0]) {
-                    var dayOptions = {
-                        weekday: "short",
-                        month: "short",
-                        day: "numeric",
-                        year: undefined
-                    };
-
-                    var hourOptions = {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: undefined
-                    };
-
-                    let day = d1.x.toLocaleDateString('en-NZ', dayOptions);
-                    let hour = d1.x.toLocaleTimeString('en-NZ', hourOptions);
+                    let {day, hour} = dayHour(d1.x);
                     let msgY = d1.y.toString() + ' ' + yUnit;
                     drawOverlay(6, 9, '.3em', day, hour, msgY, overlay);
                     moveLabel(dp, dx, dy, overlay);
