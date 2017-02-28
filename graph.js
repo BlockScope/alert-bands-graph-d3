@@ -8,7 +8,7 @@ var bufferFractionMinY = 0.1;
 var bufferFractionMaxY = 0.1;
 
 var defaultPlotBox = {
-    width: 800,
+    width: 700,
     height: 400,
     padLeft: 30,
     padBottom: 30
