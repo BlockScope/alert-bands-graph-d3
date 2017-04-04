@@ -275,20 +275,21 @@ var drawOverlay = function (r, x, dy, day, hour, msgY, label) {
         .attr('id', 'x-overlay-day')
         .attr('x', x)
         .attr('dy', dy)
-        .attr('transform', 'translate(0, 40)')
+        .attr('transform', 'translate(0, -20)')
         .attr('text-anchor', 'left');
 
     label.append('text')
         .attr('id', 'x-overlay-hour')
         .attr('x', x)
         .attr('dy', dy)
-        .attr('transform', 'translate(0, 20)')
+        .attr('transform', 'translate(0, -40)')
         .attr('text-anchor', 'left');
 
     label.append('text')
         .attr('id', 'y-overlay')
         .attr('x', x)
         .attr('dy', dy)
+        .attr('transform', 'translate(0, -60)')
         .attr('text-anchor', 'left');
 
     label.select('#x-overlay-day').text(day);
